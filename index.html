@@ -68,14 +68,15 @@ function topic(x) {
 }
 async function load() {
   try {
-    const res = await fetch('./hotspots.json', { cache: 'no-store' });
+    const res = await fetch(`./hotspots.json?t=${Date.now()}`, { cache: 'no-store' });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const p = await res.json();
     rows = (p.items || []).map(norm);
     pipeline = p.pipeline || {};
     page = 1;
     selected = rows[0] || null;
-    $('#status').textContent = `真实采集完成 · ${rows.length} 条热点已进入运营池`;
+    const updatedAt = p.collectedAt ? new Date(p.collectedAt).toLocaleString('zh-CN', { hour12: false }) : '未知时间';
+    $('#status').textContent = `更新于 ${updatedAt} · ${rows.length} 条热点已进入运营池`;
     render();
   } catch (e) {
     $('#status').textContent = '热点数据加载失败';
@@ -95,7 +96,7 @@ $('#topicFromSelected').onclick = () => topic(selected || list()[0]);
 $('#close').onclick = () => $('#modal').classList.remove('show');
 $('#close2').onclick = () => $('#modal').classList.remove('show');
 load();
+setInterval(load, 60 * 60 * 1000);
 </script>
 </body>
 </html>
-

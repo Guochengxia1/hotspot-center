@@ -49,3 +49,8 @@ python server.py
 
 已接入真实采集服务：百度、今日头条、抖音、微博、快手、小红书公开入口，以及 IT之家、雷科技、少数派 RSS。热点数据由后台按小时刷新；受限平台会返回状态，不绕过登录、验证码或访问控制。
 
+## GitHub Pages 自动更新
+
+`.github/workflows/update-hotspots.yml` 每小时运行一次 `build-static-data.py`，将最新快照写入根目录 `hotspots.json` 并提交回 `main`。页面打开后也会每小时重新拉取一次快照，并通过时间戳参数避开 CDN 缓存。
+
+为防止临时网络故障覆盖正常数据，采集结果少于 20 条或没有成功来源时任务会失败并保留上一版快照。也可以在 GitHub Actions 页面手动运行 `Update hotspot data`。
